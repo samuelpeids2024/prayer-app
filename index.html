@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同心禱告園地 - 教會團契禱告事項分享（實時同步版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-auth-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #d4a574;
+            --secondary: #8b7355;
+            --light: #f9f3e9;
+            --dark: #5a4a3a;
+            --accent: #8b575c;
+            --success: #6c8b5f;
+            --shadow: rgba(90, 74, 58, 0.1);
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%23d4a574" fill-opacity="0.05" d="M50,0 C22.4,0 0,22.4 0,50 C0,77.6 22.4,100 50,100 C77.6,100 100,77.6 100,50 C100,22.4 77.6,0 50,0 Z M50,90 C27.9,90 10,72.1 10,50 C10,27.9 27.9,10 50,10 C72.1,10 90,27.9 90,50 C90,72.1 72.1,90 50,90 Z M50,30 C38.4,30 30,38.4 30,50 C30,61.6 38.4,70 50,70 C61.6,70 70,61.6 70,50 C70,38.4 61.6,30 50,30 Z"/></svg>');
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 5px 15px var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "✝";
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0.05;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .scripture {
+            font-style: italic;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .connection-status {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+        }
+        
+        .status-indicator.connected {
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .prayer-form {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+        
+        .prayer-list {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--accent);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px var(--shadow);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .prayer-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            border-left: 5px solid var(--primary);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .prayer-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .prayer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .prayer-name {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .prayer-category {
+            background-color: var(--light);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .prayer-content {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        .prayer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px dashed #eee;
+            padding-top: 1rem;
+        }
+        
+        .pray-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .pray-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pray-btn:hover {
+            background-color: rgba(139, 87, 92, 0.1);
+        }
+        
+        .pray-count {
+            color: var(--accent);
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 2rem;
+        }
+        
+        .instructions {
+            background-color: rgba(212, 165, 116, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .filter-container {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .firebase-instructions {
+            background-color: rgba(106, 139, 95, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--success);
+        }
+        
+        .firebase-instructions h3 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .firebase-instructions code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .prayer-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .prayer-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .pray-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-hands-praying"></i> 同心禱告園地</h1>
+            <p class="subtitle">實時同步禱告事項 - 在基督裡彼此扶持</p>
+            <div class="scripture">
+                「你們要彼此代禱，使你們可以得醫治。義人祈禱所發的力量是大有功效的。」（雅各書 5:16）
+            </div>
+            <div class="connection-status">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="statusText">連接中...</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Firebase 配置說明（第一次使用時顯示） -->
+        <div class="firebase-instructions" id="firebaseSetup" style="display: none;">
+            <h3><i class="fas fa-cog"></i> 首次使用設置</h3>
+            <p>請按照以下步驟設置Firebase以啟用實時同步功能：</p>
+            <ol>
+                <li>前往 <a href="https://console.firebase.google.com/" target="_blank">Firebase 控制台</a></li>
+                <li>創建新項目，啟用Firestore數據庫和匿名認證</li>
+                <li>註冊Web應用，複製配置代碼</li>
+                <li>替換下面第4-14行的firebaseConfig內容</li>
+            </ol>
+            <button onclick="showConfigEditor()" class="sync-btn" style="width: auto; margin-top: 10px;">
+                <i class="fas fa-edit"></i> 配置Firebase
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 使用說明</h3>
+            <p>這是一個實時同步的禱告事項平台！您提交的禱告事項會立即與所有團契成員同步。可以為他人的禱告需求點擊"代禱"，支持會實時更新。</p>
+        </div>
+        
+        <div class="main-content">
+            <section class="prayer-form">
+                <h2><i class="fas fa-pen-alt"></i> 提交禱告事項</h2>
+                <form id="prayerForm">
+                    <div class="form-group">
+                        <label for="prayerName">您的名字（可選）</label>
+                        <input type="text" id="prayerName" placeholder="例如：張弟兄、李姊妹">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prayerCategory">禱告類別</label>
+                        <select id="prayerCategory">
+                            <option value="personal">個人需要</option>
+                            <option value="family">家庭婚姻</option>
+                            <option value="health">健康醫療</option>
+                            <option value="work">工作事業</option>
+                            <option value="spiritual">靈性成長</option>
+                            <option value="others">其他事項</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prayerContent">禱告事項內容 *</label>
+                        <textarea id="prayerContent" placeholder="請詳細描述需要代禱的事項..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submitPrayer" disabled>
+                        <i class="fas fa-paper-plane"></i> 提交禱告需求
+                    </button>
+                </form>
+                
+                <div style="margin-top: 20px; text-align: center; color: #777; font-size: 0.9rem;">
+                    <i class="fas fa-sync-alt"></i> 實時同步已啟用
+                </div>
+            </section>
+            
+            <section class="prayer-list">
+                <h2><i class="fas fa-pray"></i> 代禱事項清單 <span id="prayerCount" style="font-size: 1rem; color: #777;">(0)</span></h2>
+                
+                <div class="filter-container">
+                    <div class="filter-btn active" data-filter="all">全部</div>
+                    <div class="filter-btn" data-filter="personal">個人需要</div>
+                    <div class="filter-btn" data-filter="family">家庭婚姻</div>
+                    <div class="filter-btn" data-filter="health">健康醫療</div>
+                    <div class="filter-btn" data-filter="work">工作事業</div>
+                    <div class="filter-btn" data-filter="spiritual">靈性成長</div>
+                </div>
+                
+                <div id="prayersContainer">
+                    <div class="loading" id="loadingIndicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>正在加載禱告事項...</p>
+                    </div>
+                    <!-- 禱告事項會動態顯示在這裡 -->
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2023 同心禱告園地 - 實時同步禱告平台 | 使用Firebase後端技術，所有禱告事項即時共享</p>
+        </footer>
+    </div>
+
+    <!-- Firebase 配置編輯模態框 -->
+    <div id="configModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h3 style="margin-bottom: 1rem;">配置 Firebase</h3>
+            <p>請將您的Firebase配置貼在下方：</p>
+            <textarea id="configInput" style="width: 100%; height: 200px; font-family: monospace; margin: 1rem 0; padding: 1rem;" placeholder="// 從Firebase控制台複製的配置
+const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'your-app.firebaseapp.com',
+  projectId: 'your-app',
+  storageBucket: 'your-app.appspot.com',
+  messagingSenderId: 'YOUR_SENDER_ID',
+  appId: 'YOUR_APP_ID'
+};"></textarea>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="saveFirebaseConfig()" class="sync-btn" style="width: auto;">保存配置</button>
+                <button onclick="hideConfigEditor()" class="sync-btn" style="width: auto; background: #777;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== Firebase 配置 ====================
+        // 請用您自己的Firebase配置替換以下內容
+        // 如何獲取：Firebase控制台 -> 項目設置 -> 您的應用程式 -> SDK設置
+        
+        let firebaseConfig = {
+            apiKey: "AIzaSyBhy8f2cGbmspNhktEFk_1svKGmIk4uRhc",
+			authDomain: "church-prayer-app-f7221.firebaseapp.com",
+			projectId: "church-prayer-app-f7221",
+			storageBucket: "church-prayer-app-f7221.firebasestorage.app",
+			messagingSenderId: "462537118904",
+			appId: "1:462537118904:web:f8ac8f0eaf207c5ec4504d"
+        };
+        
+        // 嘗試從本地存儲加載配置
+        const savedConfig = localStorage.getItem('firebaseConfig');
+        if (savedConfig) {
+            try {
+                firebaseConfig = JSON.parse(savedConfig);
+                document.getElementById('firebaseSetup').style.display = 'none';
+            } catch (e) {
+                console.log('使用默認配置');
+            }
+        } else {
+            document.getElementById('firebaseSetup').style.display = 'block';
+        }
+        
+        // ==================== Firebase 初始化 ====================
+        let db;
+        let auth;
+        let prayersCollection;
+        let unsubscribe;
+        
+        function initializeFirebase() {
+            try {
+                // 初始化 Firebase
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                auth = firebase.auth();
+                
+                // 設置匿名認證
+                auth.signInAnonymously().then(() => {
+                    console.log('匿名登入成功');
+                    updateConnectionStatus(true);
+                    
+                    // 啟用提交按鈕
+                    document.getElementById('submitPrayer').disabled = false;
+                    
+                    // 設置禱告事項集合
+                    prayersCollection = db.collection('prayers');
+                    
+                    // 開始監聽數據變化
+                    loadPrayers();
+                }).catch(error => {
+                    console.error('匿名登入失敗:', error);
+                    updateConnectionStatus(false, '登入失敗');
+                });
+                
+            } catch (error) {
+                console.error('Firebase初始化失敗:', error);
+                updateConnectionStatus(false, '配置錯誤');
+                document.getElementById('firebaseSetup').style.display = 'block';
+            }
+        }
+        
+        // ==================== 數據操作函數 ====================
+        
+        // 監聽禱告事項變化
+        function loadPrayers() {
+            const prayersContainer = document.getElementById('prayersContainer');
+            
+            // 移除之前的監聽器
+            if (unsubscribe) {
+                unsubscribe();
+            }
+            
+            // 監聽Firestore集合的變化
+            unsubscribe = prayersCollection
+                .orderBy('createdAt', 'desc')
+                .onSnapshot((snapshot) => {
+                    prayersContainer.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        prayersContainer.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-praying-hands"></i>
+                                <h3>尚未有禱告事項</h3>
+                                <p>成為第一個分享禱告需求的人</p>
+                            </div>
+                        `;
+                        document.getElementById('prayerCount').textContent = '(0)';
+                        return;
+                    }
+                    
+                    // 更新計數
+                    document.getElementById('prayerCount').textContent = `(${snapshot.size})`;
+                    
+                    // 處理每個文檔
+                    snapshot.forEach(doc => {
+                        const prayer = doc.data();
+                        prayer.id = doc.id;
+                        addPrayerToDOM(prayer);
+                    });
+                    
+                    // 添加篩選功能
+                    setupFiltering();
+                    
+                }, (error) => {
+                    console.error('監聽數據失敗:', error);
+                    prayersContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>加載失敗</h3>
+                            <p>無法連接數據庫，請檢查網絡連接</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 添加禱告事項到DOM
+        function addPrayerToDOM(prayer) {
+            const prayersContainer = document.getElementById('prayersContainer');
+            
+            // 類別標籤對應
+            const categoryLabels = {
+                'personal': '個人需要',
+                'family': '家庭婚姻',
+                'health': '健康醫療',
+                'work': '工作事業',
+                'spiritual': '靈性成長',
+                'others': '其他事項'
+            };
+            
+            // 格式化日期
+            const date = prayer.createdAt ? prayer.createdAt.toDate().toLocaleDateString('zh-TW') : '最近';
+            
+            const prayerElement = document.createElement('div');
+            prayerElement.className = 'prayer-card';
+            prayerElement.dataset.id = prayer.id;
+            prayerElement.dataset.category = prayer.category;
+            
+            prayerElement.innerHTML = `
+                <div class="prayer-header">
+                    <div class="prayer-name">${prayer.name || '一位弟兄/姊妹'}</div>
+                    <div class="prayer-category">${categoryLabels[prayer.category] || '其他'}</div>
+                </div>
+                <div class="prayer-content">${prayer.content}</div>
+                <div class="prayer-footer">
+                    <div class="prayer-date">${date}</div>
+                    <div class="pray-actions">
+                        <button class="pray-btn" data-id="${prayer.id}">
+                            <i class="fas fa-hands-praying"></i> 為此禱告
+                            <span class="pray-count">${prayer.prayCount || 0}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            prayersContainer.appendChild(prayerElement);
+            
+            // 為禱告按鈕添加事件
+            const prayBtn = prayerElement.querySelector('.pray-btn');
+            prayBtn.addEventListener('click', function() {
+                increasePrayCount(prayer.id, prayer.prayCount || 0);
+            });
+        }
+        
+        // 增加禱告計數
+        function increasePrayCount(prayerId, currentCount) {
+            prayersCollection.doc(prayerId).update({
+                prayCount: currentCount + 1,
+                lastPrayedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showNotification('已為此禱告事項代禱！');
+            }).catch(error => {
+                console.error('更新禱告計數失敗:', error);
+                showNotification('更新失敗，請重試');
+            });
+        }
+        
+        // 提交新禱告事項
+        document.getElementById('prayerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitPrayer');
+            const originalText = submitBtn.innerHTML;
+            
+            // 禁用按鈕防止重複提交
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 提交中...';
+            
+            const name = document.getElementById('prayerName').value.trim();
+            const category = document.getElementById('prayerCategory').value;
+            const content = document.getElementById('prayerContent').value.trim();
+            
+            if (!content) {
+                alert('請填寫禱告事項內容');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                return;
+            }
+            
+            try {
+                // 添加到Firestore
+                await prayersCollection.add({
+                    name: name || '',
+                    category: category,
+                    content: content,
+                    prayCount: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: auth.currentUser.uid
+                });
+                
+                // 重置表單
+                document.getElementById('prayerForm').reset();
+                showNotification('禱告事項已提交！');
+                
+            } catch (error) {
+                console.error('提交失敗:', error);
+                showNotification('提交失敗，請重試');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+        
+        // ==================== 輔助函數 ====================
+        
+        // 更新連接狀態
+        function updateConnectionStatus(connected, message = '') {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (connected) {
+                indicator.className = 'status-indicator connected';
+                statusText.textContent = '已連接實時數據庫';
+            } else {
+                indicator.className = 'status-indicator';
+                statusText.textContent = message || '未連接';
+            }
+        }
+        
+        // 顯示通知
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(to right, var(--primary), var(--secondary));
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px var(--shadow);
+                z-index: 1000;
+                transform: translateX(150%);
+                transition: transform 0.5s;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 顯示通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // 3秒後隱藏通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+        
+        // 設置篩選功能
+        function setupFiltering() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const prayerCards = document.querySelectorAll('.prayer-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新活動按鈕
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    
+                    // 篩選顯示
+                    prayerCards.forEach(card => {
+                        if (filter === 'all' || card.dataset.category === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+        
+        // ==================== Firebase 配置編輯功能 ====================
+        
+        function showConfigEditor() {
+            document.getElementById('configModal').style.display = 'flex';
+            document.getElementById('configInput').value = `const firebaseConfig = ${JSON.stringify(firebaseConfig, null, 2)};`;
+        }
+        
+        function hideConfigEditor() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+        
+        function saveFirebaseConfig() {
+            const configInput = document.getElementById('configInput').value;
+            
+            try {
+                // 提取配置對象
+                const match = configInput.match(/const firebaseConfig = ({[\s\S]*?});/);
+                if (match && match[1]) {
+                    const newConfig = JSON.parse(match[1]);
+                    
+                    // 保存到本地存儲
+                    localStorage.setItem('firebaseConfig', JSON.stringify(newConfig));
+                    
+                    // 更新配置
+                    firebaseConfig = newConfig;
+                    
+                    // 重新初始化
+                    if (firebase.apps.length > 0) {
+                        firebase.app().delete();
+                    }
+                    
+                    hideConfigEditor();
+                    document.getElementById('firebaseSetup').style.display = 'none';
+                    
+                    // 重新初始化Firebase
+                    setTimeout(() => {
+                        initializeFirebase();
+                        showNotification('Firebase配置已更新！');
+                    }, 500);
+                } else {
+                    alert('請貼上完整的firebaseConfig對象代碼');
+                }
+            } catch (error) {
+                alert('配置格式不正確，請檢查JSON格式');
+                console.error('配置解析錯誤:', error);
+            }
+        }
+        
+        // ==================== 初始化應用 ====================
+        
+        // 頁面加載完成後初始化Firebase
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFirebase();
+            
+            // 設置篩選按鈕
+            setupFiltering();
+        });
+        
+        // 確保Firebase配置模態框可以關閉
+        document.getElementById('configModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideConfigEditor();
+            }
+        });
+    </script>
+	<script type="module">
+	  // Import the functions you need from the SDKs you need
+	  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+	  // TODO: Add SDKs for Firebase products that you want to use
+	  // https://firebase.google.com/docs/web/setup#available-libraries
+
+	  // Your web app's Firebase configuration
+	  const firebaseConfig = {
+		apiKey: "AIzaSyBhy8f2cGbmspNhktEFk_1svKGmIk4uRhc",
+		authDomain: "church-prayer-app-f7221.firebaseapp.com",
+		projectId: "church-prayer-app-f7221",
+		storageBucket: "church-prayer-app-f7221.firebasestorage.app",
+		messagingSenderId: "462537118904",
+		appId: "1:462537118904:web:f8ac8f0eaf207c5ec4504d"
+	  };
+
+	  // Initialize Firebase
+	  const app = initializeApp(firebaseConfig);
+	</script>
+</body>
+</html>
