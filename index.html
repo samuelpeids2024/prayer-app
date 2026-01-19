@@ -418,8 +418,8 @@
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-hands-praying"></i> YAF同心禱告園地</h1>
-            <p class="subtitle">實時同步禱告事項 - 在基督裡彼此扶持</p>
+            <h1><i class="fas fa-hands-praying"></i> YAF同心禱告園</h1>
+            <p class="subtitle">同步禱告事項 - 在基督裡彼此扶持</p>
             <div class="scripture">
                 「你們要彼此代禱，使你們可以得醫治。義人祈禱所發的力量是大有功效的。」（雅各書 5:16）
             </div>
@@ -497,7 +497,7 @@
         </div>
         
         <footer>
-            <p>© 2026 YAF同心禱告園地 - 實時同步禱告平台</p>
+            <p>© 2026 YAF同心禱告園 - 實時同步禱告平台</p>
         </footer>
     </div>
 
@@ -523,10 +523,6 @@ const firebaseConfig = {
     </div>
 
     <script>
-        // ==================== Firebase 配置 ====================
-        // 請用您自己的Firebase配置替換以下內容
-        // 如何獲取：Firebase控制台 -> 項目設置 -> 您的應用程式 -> SDK設置
-        
         let firebaseConfig = {
             apiKey: "AIzaSyBhy8f2cGbmspNhktEFk_1svKGmIk4uRhc",
 			authDomain: "church-prayer-app-f7221.firebaseapp.com",
@@ -535,8 +531,6 @@ const firebaseConfig = {
 			messagingSenderId: "462537118904",
 			appId: "1:462537118904:web:f8ac8f0eaf207c5ec4504d"
         };
-        
-        // 嘗試從本地存儲加載配置
         const savedConfig = localStorage.getItem('firebaseConfig');
         if (savedConfig) {
             try {
@@ -557,23 +551,18 @@ const firebaseConfig = {
         
         function initializeFirebase() {
             try {
-                // 初始化 Firebase
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
                 auth = firebase.auth();
                 
-                // 設置匿名認證
                 auth.signInAnonymously().then(() => {
                     console.log('匿名登入成功');
                     updateConnectionStatus(true);
                     
-                    // 啟用提交按鈕
                     document.getElementById('submitPrayer').disabled = false;
                     
-                    // 設置禱告事項集合
                     prayersCollection = db.collection('prayers');
                     
-                    // 開始監聽數據變化
                     loadPrayers();
                 }).catch(error => {
                     console.error('匿名登入失敗:', error);
@@ -587,18 +576,13 @@ const firebaseConfig = {
             }
         }
         
-        // ==================== 數據操作函數 ====================
-        
-        // 監聽禱告事項變化
         function loadPrayers() {
             const prayersContainer = document.getElementById('prayersContainer');
             
-            // 移除之前的監聽器
             if (unsubscribe) {
                 unsubscribe();
             }
             
-            // 監聽Firestore集合的變化
             unsubscribe = prayersCollection
                 .orderBy('createdAt', 'desc')
                 .onSnapshot((snapshot) => {
@@ -616,17 +600,14 @@ const firebaseConfig = {
                         return;
                     }
                     
-                    // 更新計數
                     document.getElementById('prayerCount').textContent = `(${snapshot.size})`;
                     
-                    // 處理每個文檔
                     snapshot.forEach(doc => {
                         const prayer = doc.data();
                         prayer.id = doc.id;
                         addPrayerToDOM(prayer);
                     });
                     
-                    // 添加篩選功能
                     setupFiltering();
                     
                 }, (error) => {
