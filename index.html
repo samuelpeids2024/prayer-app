@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-	<!-- 必備的Open Graph標籤 -->
+    <!-- 必備的Open Graph標籤 -->
     <meta property="og:title" content="YAF同心禱告園地 - 團契禱告事項分享">
     <meta property="og:description" content="加入我們的禱告團契，彼此代禱，互相扶持。分享您的禱告需求，為他人代禱。">
     <meta property="og:image" content="./prayer-preview.png">
@@ -23,7 +23,7 @@
     <!-- 可選的額外標籤 -->
     <meta name="description" content="YAF團契禱告事項分享平台，讓我們彼此代禱，互相扶持，在主愛中一同成長。">
     <meta name="keywords" content="禱告, 教會, 團契, 代禱, 基督教, 信仰">
-	
+    
     <title>同心禱告園地 - YAF團契禱告事項分享（實時同步版）</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -48,6 +48,24 @@
             --accent: #8b575c;
             --success: #6c8b5f;
             --shadow: rgba(90, 74, 58, 0.1);
+            --personal: #e74c3c;
+            --emotional: #9b59b6;
+            --family: #3498db;
+            --parenting: #1abc9c;
+            --health: #2ecc71;
+            --recovery: #27ae60;
+            --work: #f39c12;
+            --career: #d35400;
+            --financial: #16a085;
+            --relationship: #8e44ad;
+            --faith: #c0392b;
+            --spiritual: #2980b9;
+            --missions: #8b7355;
+            --study: #2c3e50;
+            --decisions: #7f8c8d;
+            --community: #34495e;
+            --thanksgiving: #f1c40f;
+            --others: #95a5a6;
         }
         
         body {
@@ -259,11 +277,11 @@
         }
         
         .prayer-category {
-            background-color: var(--light);
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.9rem;
-            color: var(--dark);
+            color: white;
+            font-weight: 500;
         }
         
         .prayer-content {
@@ -304,8 +322,32 @@
             background-color: rgba(139, 87, 92, 0.1);
         }
         
+        .reply-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .reply-btn:hover {
+            background-color: rgba(212, 165, 116, 0.1);
+        }
+        
         .pray-count {
             color: var(--accent);
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .reply-count {
+            color: var(--primary);
             font-weight: bold;
             margin-left: 5px;
         }
@@ -353,12 +395,12 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 0.9rem;
         }
         
         .filter-btn.active {
-            background-color: var(--primary);
             color: white;
-            border-color: var(--primary);
+            border-color: transparent;
         }
         
         .firebase-instructions {
@@ -388,6 +430,179 @@
             color: #777;
         }
         
+        /* 回覆區塊樣式 */
+        .replies-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .replies-toggle {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .replies-toggle:hover {
+            color: var(--primary);
+        }
+        
+        .replies-container {
+            margin-top: 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .replies-container.expanded {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .reply-item {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .reply-name {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .reply-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        .reply-content {
+            line-height: 1.6;
+            color: #444;
+        }
+        
+        .reply-form {
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .reply-form.active {
+            display: block;
+        }
+        
+        .reply-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .reply-submit-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        /* 類別顏色設置 */
+        .category-personal { border-left-color: var(--personal); }
+        .category-personal .prayer-category { background-color: var(--personal); }
+        .filter-btn[data-filter="personal"].active { background-color: var(--personal); }
+        
+        .category-emotional { border-left-color: var(--emotional); }
+        .category-emotional .prayer-category { background-color: var(--emotional); }
+        .filter-btn[data-filter="emotional"].active { background-color: var(--emotional); }
+        
+        .category-family { border-left-color: var(--family); }
+        .category-family .prayer-category { background-color: var(--family); }
+        .filter-btn[data-filter="family"].active { background-color: var(--family); }
+        
+        .category-parenting { border-left-color: var(--parenting); }
+        .category-parenting .prayer-category { background-color: var(--parenting); }
+        .filter-btn[data-filter="parenting"].active { background-color: var(--parenting); }
+        
+        .category-health { border-left-color: var(--health); }
+        .category-health .prayer-category { background-color: var(--health); }
+        .filter-btn[data-filter="health"].active { background-color: var(--health); }
+        
+        .category-recovery { border-left-color: var(--recovery); }
+        .category-recovery .prayer-category { background-color: var(--recovery); }
+        .filter-btn[data-filter="recovery"].active { background-color: var(--recovery); }
+        
+        .category-work { border-left-color: var(--work); }
+        .category-work .prayer-category { background-color: var(--work); }
+        .filter-btn[data-filter="work"].active { background-color: var(--work); }
+        
+        .category-career { border-left-color: var(--career); }
+        .category-career .prayer-category { background-color: var(--career); }
+        .filter-btn[data-filter="career"].active { background-color: var(--career); }
+        
+        .category-financial { border-left-color: var(--financial); }
+        .category-financial .prayer-category { background-color: var(--financial); }
+        .filter-btn[data-filter="financial"].active { background-color: var(--financial); }
+        
+        .category-relationship { border-left-color: var(--relationship); }
+        .category-relationship .prayer-category { background-color: var(--relationship); }
+        .filter-btn[data-filter="relationship"].active { background-color: var(--relationship); }
+        
+        .category-faith { border-left-color: var(--faith); }
+        .category-faith .prayer-category { background-color: var(--faith); }
+        .filter-btn[data-filter="faith"].active { background-color: var(--faith); }
+        
+        .category-spiritual { border-left-color: var(--spiritual); }
+        .category-spiritual .prayer-category { background-color: var(--spiritual); }
+        .filter-btn[data-filter="spiritual"].active { background-color: var(--spiritual); }
+        
+        .category-missions { border-left-color: var(--missions); }
+        .category-missions .prayer-category { background-color: var(--missions); }
+        .filter-btn[data-filter="missions"].active { background-color: var(--missions); }
+        
+        .category-study { border-left-color: var(--study); }
+        .category-study .prayer-category { background-color: var(--study); }
+        .filter-btn[data-filter="study"].active { background-color: var(--study); }
+        
+        .category-decisions { border-left-color: var(--decisions); }
+        .category-decisions .prayer-category { background-color: var(--decisions); }
+        .filter-btn[data-filter="decisions"].active { background-color: var(--decisions); }
+        
+        .category-community { border-left-color: var(--community); }
+        .category-community .prayer-category { background-color: var(--community); }
+        .filter-btn[data-filter="community"].active { background-color: var(--community); }
+        
+        .category-thanksgiving { border-left-color: var(--thanksgiving); }
+        .category-thanksgiving .prayer-category { background-color: var(--thanksgiving); }
+        .filter-btn[data-filter="thanksgiving"].active { background-color: var(--thanksgiving); }
+        
+        .category-others { border-left-color: var(--others); }
+        .category-others .prayer-category { background-color: var(--others); }
+        .filter-btn[data-filter="others"].active { background-color: var(--others); }
+        
+        .category-all { border-left-color: var(--primary); }
+        .filter-btn[data-filter="all"].active { 
+            background: linear-gradient(to right, var(--primary), var(--secondary)); 
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -412,6 +627,11 @@
             .pray-actions {
                 align-self: flex-end;
             }
+            
+            .filter-container {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -435,7 +655,7 @@
         
         <div class="instructions">
             <h3><i class="fas fa-info-circle"></i> 使用說明</h3>
-            <p>這是一個實時同步的禱告事項平台！您提交的禱告事項會立即與所有團契成員同步。可以為他人的禱告需求點擊"代禱"，支持會實時更新。</p>
+            <p>這是一個實時同步的禱告事項平台！您提交的禱告事項會立即與所有團契成員同步。可以為他人的禱告需求點擊"代禱"，也可以回覆禱告詞彼此鼓勵。</p>
         </div>
         
         <div class="main-content">
@@ -451,10 +671,22 @@
                         <label for="prayerCategory">禱告類別</label>
                         <select id="prayerCategory">
                             <option value="personal">個人需要</option>
+                            <option value="emotional">情緒與壓力</option>
                             <option value="family">家庭婚姻</option>
+                            <option value="parenting">親子教養</option>
                             <option value="health">健康醫療</option>
+                            <option value="recovery">疾病康復</option>
                             <option value="work">工作事業</option>
+                            <option value="career">職涯發展</option>
+                            <option value="financial">經濟財務</option>
+                            <option value="relationship">人際關係</option>
+                            <option value="faith">信仰生命</option>
                             <option value="spiritual">靈性成長</option>
+                            <option value="missions">宣教與服事</option>
+                            <option value="study">學業進修</option>
+                            <option value="decisions">重大抉擇</option>
+                            <option value="community">社會與環境</option>
+                            <option value="thanksgiving">數算恩典</option>
                             <option value="others">其他事項</option>
                         </select>
                     </div>
@@ -480,10 +712,23 @@
                 <div class="filter-container">
                     <div class="filter-btn active" data-filter="all">全部</div>
                     <div class="filter-btn" data-filter="personal">個人需要</div>
+                    <div class="filter-btn" data-filter="emotional">情緒壓力</div>
                     <div class="filter-btn" data-filter="family">家庭婚姻</div>
+                    <div class="filter-btn" data-filter="parenting">親子教養</div>
                     <div class="filter-btn" data-filter="health">健康醫療</div>
+                    <div class="filter-btn" data-filter="recovery">疾病康復</div>
                     <div class="filter-btn" data-filter="work">工作事業</div>
+                    <div class="filter-btn" data-filter="career">職涯發展</div>
+                    <div class="filter-btn" data-filter="financial">經濟財務</div>
+                    <div class="filter-btn" data-filter="relationship">人際關係</div>
+                    <div class="filter-btn" data-filter="faith">信仰生命</div>
                     <div class="filter-btn" data-filter="spiritual">靈性成長</div>
+                    <div class="filter-btn" data-filter="missions">宣教服事</div>
+                    <div class="filter-btn" data-filter="study">學業進修</div>
+                    <div class="filter-btn" data-filter="decisions">重大抉擇</div>
+                    <div class="filter-btn" data-filter="community">社會環境</div>
+                    <div class="filter-btn" data-filter="thanksgiving">數算恩典</div>
+                    <div class="filter-btn" data-filter="others">其他事項</div>
                 </div>
                 
                 <div id="prayersContainer">
@@ -501,23 +746,29 @@
         </footer>
     </div>
 
-    <!-- Firebase 配置編輯模態框 -->
-    <div id="configModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <!-- 回覆模態框 -->
+    <div id="replyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
         <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-            <h3 style="margin-bottom: 1rem;">配置 Firebase</h3>
-            <p>請將您的Firebase配置貼在下方：</p>
-            <textarea id="configInput" style="width: 100%; height: 200px; font-family: monospace; margin: 1rem 0; padding: 1rem;" placeholder="// 從Firebase控制台複製的配置
-const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'your-app.firebaseapp.com',
-  projectId: 'your-app',
-  storageBucket: 'your-app.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID'
-};"></textarea>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button onclick="saveFirebaseConfig()" class="sync-btn" style="width: auto;">保存配置</button>
-                <button onclick="hideConfigEditor()" class="sync-btn" style="width: auto; background: #777;">取消</button>
+            <h3 style="margin-bottom: 1rem; color: var(--secondary);"><i class="fas fa-pray"></i> 為此禱告</h3>
+            <p style="margin-bottom: 1rem; color: #666;">請為以下禱告事項寫下您的禱告詞：</p>
+            <div id="modalPrayerContent" style="background-color: #f9f9f9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-style: italic;">
+                <!-- 禱告內容會動態顯示在這裡 -->
+            </div>
+            <div class="form-group">
+                <label for="replyName">您的名字（可選）</label>
+                <input type="text" id="replyName" placeholder="例如：王弟兄、林姊妹">
+            </div>
+            <div class="form-group">
+                <label for="replyContent">您的禱告詞 *</label>
+                <textarea id="replyContent" placeholder="請寫下您為此事項的禱告詞..." rows="5" required></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.5rem;">
+                <button onclick="submitReply()" style="background: linear-gradient(to right, var(--primary), var(--secondary)); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> 提交禱告詞
+                </button>
+                <button onclick="hideReplyModal()" style="background: #777; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                    取消
+                </button>
             </div>
         </div>
     </div>
@@ -531,23 +782,48 @@ const firebaseConfig = {
 			messagingSenderId: "462537118904",
 			appId: "1:462537118904:web:f8ac8f0eaf207c5ec4504d"
         };
+        
         const savedConfig = localStorage.getItem('firebaseConfig');
         if (savedConfig) {
             try {
                 firebaseConfig = JSON.parse(savedConfig);
-                document.getElementById('firebaseSetup').style.display = 'none';
             } catch (e) {
                 console.log('使用默認配置');
             }
-        } else {
-            //document.getElementById('firebaseSetup').style.display = 'block';
         }
         
         // ==================== Firebase 初始化 ====================
         let db;
         let auth;
         let prayersCollection;
-        let unsubscribe;
+        let repliesCollection;
+        let unsubscribePrayers;
+        let unsubscribeReplies = {};
+        
+        // 類別配置
+        const categoryConfig = {
+            'personal': { name: '個人需要', color: 'var(--personal)' },
+            'emotional': { name: '情緒與壓力', color: 'var(--emotional)' },
+            'family': { name: '家庭婚姻', color: 'var(--family)' },
+            'parenting': { name: '親子教養', color: 'var(--parenting)' },
+            'health': { name: '健康醫療', color: 'var(--health)' },
+            'recovery': { name: '疾病康復', color: 'var(--recovery)' },
+            'work': { name: '工作事業', color: 'var(--work)' },
+            'career': { name: '職涯發展', color: 'var(--career)' },
+            'financial': { name: '經濟財務', color: 'var(--financial)' },
+            'relationship': { name: '人際關係', color: 'var(--relationship)' },
+            'faith': { name: '信仰生命', color: 'var(--faith)' },
+            'spiritual': { name: '靈性成長', color: 'var(--spiritual)' },
+            'missions': { name: '宣教與服事', color: 'var(--missions)' },
+            'study': { name: '學業進修', color: 'var(--study)' },
+            'decisions': { name: '重大抉擇', color: 'var(--decisions)' },
+            'community': { name: '社會與環境', color: 'var(--community)' },
+            'thanksgiving': { name: '數算恩典', color: 'var(--thanksgiving)' },
+            'others': { name: '其他事項', color: 'var(--others)' }
+        };
+        
+        // 當前選中的禱告ID（用於回覆）
+        let currentPrayerId = null;
         
         function initializeFirebase() {
             try {
@@ -562,6 +838,7 @@ const firebaseConfig = {
                     document.getElementById('submitPrayer').disabled = false;
                     
                     prayersCollection = db.collection('prayers');
+                    repliesCollection = db.collection('replies');
                     
                     loadPrayers();
                 }).catch(error => {
@@ -572,18 +849,17 @@ const firebaseConfig = {
             } catch (error) {
                 console.error('Firebase初始化失敗:', error);
                 updateConnectionStatus(false, '配置錯誤');
-                document.getElementById('firebaseSetup').style.display = 'block';
             }
         }
         
         function loadPrayers() {
             const prayersContainer = document.getElementById('prayersContainer');
             
-            if (unsubscribe) {
-                unsubscribe();
+            if (unsubscribePrayers) {
+                unsubscribePrayers();
             }
             
-            unsubscribe = prayersCollection
+            unsubscribePrayers = prayersCollection
                 .orderBy('createdAt', 'desc')
                 .onSnapshot((snapshot) => {
                     prayersContainer.innerHTML = '';
@@ -626,36 +902,44 @@ const firebaseConfig = {
         function addPrayerToDOM(prayer) {
             const prayersContainer = document.getElementById('prayersContainer');
             
-            // 類別標籤對應
-            const categoryLabels = {
-                'personal': '個人需要',
-                'family': '家庭婚姻',
-                'health': '健康醫療',
-                'work': '工作事業',
-                'spiritual': '靈性成長',
-                'others': '其他事項'
-            };
-            
             // 格式化日期
             const date = prayer.createdAt ? prayer.createdAt.toDate().toLocaleDateString('zh-TW') : '最近';
             
             const prayerElement = document.createElement('div');
-            prayerElement.className = 'prayer-card';
+            prayerElement.className = `prayer-card category-${prayer.category}`;
             prayerElement.dataset.id = prayer.id;
             prayerElement.dataset.category = prayer.category;
             
             prayerElement.innerHTML = `
                 <div class="prayer-header">
                     <div class="prayer-name">${prayer.name || '一位弟兄/姊妹'}</div>
-                    <div class="prayer-category">${categoryLabels[prayer.category] || '其他'}</div>
+                    <div class="prayer-category">${categoryConfig[prayer.category]?.name || '其他'}</div>
                 </div>
                 <div class="prayer-content">${prayer.content}</div>
+                
+                <div class="replies-section">
+                    <button class="replies-toggle" data-prayer-id="${prayer.id}">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>查看禱告回覆</span>
+                        <span class="reply-count">(${prayer.replyCount || 0})</span>
+                    </button>
+                    <div class="replies-container" id="replies-${prayer.id}">
+                        <!-- 回覆內容會動態加載 -->
+                    </div>
+                    <button class="reply-form-toggle" data-prayer-id="${prayer.id}" style="display: none; background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
+                        <i class="fas fa-plus"></i> 添加禱告回覆
+                    </button>
+                </div>
+                
                 <div class="prayer-footer">
                     <div class="prayer-date">${date}</div>
                     <div class="pray-actions">
                         <button class="pray-btn" data-id="${prayer.id}">
                             <i class="fas fa-hands-praying"></i> 為此禱告
                             <span class="pray-count">${prayer.prayCount || 0}</span>
+                        </button>
+                        <button class="reply-btn" data-id="${prayer.id}">
+                            <i class="fas fa-reply"></i> 回覆禱告詞
                         </button>
                     </div>
                 </div>
@@ -668,6 +952,173 @@ const firebaseConfig = {
             prayBtn.addEventListener('click', function() {
                 increasePrayCount(prayer.id, prayer.prayCount || 0);
             });
+            
+            // 為回覆按鈕添加事件
+            const replyBtn = prayerElement.querySelector('.reply-btn');
+            replyBtn.addEventListener('click', function() {
+                showReplyModal(prayer.id, prayer.content);
+            });
+            
+            // 為查看回覆按鈕添加事件
+            const repliesToggle = prayerElement.querySelector('.replies-toggle');
+            repliesToggle.addEventListener('click', function() {
+                toggleReplies(prayer.id);
+            });
+            
+            // 加載回覆數據
+            loadRepliesForPrayer(prayer.id);
+        }
+        
+        // 加載某個禱告的回覆
+        function loadRepliesForPrayer(prayerId) {
+            if (unsubscribeReplies[prayerId]) {
+                unsubscribeReplies[prayerId]();
+            }
+            
+            unsubscribeReplies[prayerId] = repliesCollection
+                .where('prayerId', '==', prayerId)
+                .orderBy('createdAt', 'asc')
+                .onSnapshot((snapshot) => {
+                    const repliesContainer = document.getElementById(`replies-${prayerId}`);
+                    const repliesToggle = document.querySelector(`.replies-toggle[data-prayer-id="${prayerId}"]`);
+                    const replyCountElement = repliesToggle?.querySelector('.reply-count');
+                    
+                    if (snapshot.empty) {
+                        repliesContainer.innerHTML = '<p style="color: #888; text-align: center; padding: 1rem;">暫無回覆</p>';
+                        if (replyCountElement) {
+                            replyCountElement.textContent = '(0)';
+                        }
+                        return;
+                    }
+                    
+                    let repliesHTML = '';
+                    snapshot.forEach(doc => {
+                        const reply = doc.data();
+                        const date = reply.createdAt ? reply.createdAt.toDate().toLocaleDateString('zh-TW') : '最近';
+                        
+                        repliesHTML += `
+                            <div class="reply-item">
+                                <div class="reply-header">
+                                    <div class="reply-name">${reply.name || '一位代禱者'}</div>
+                                    <div class="reply-date">${date}</div>
+                                </div>
+                                <div class="reply-content">${reply.content}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    repliesContainer.innerHTML = repliesHTML;
+                    
+                    // 更新回覆計數
+                    if (replyCountElement) {
+                        replyCountElement.textContent = `(${snapshot.size})`;
+                    }
+                    
+                    // 更新主禱告事項的回覆計數
+                    prayersCollection.doc(prayerId).update({
+                        replyCount: snapshot.size
+                    }).catch(error => {
+                        console.error('更新回覆計數失敗:', error);
+                    });
+                    
+                }, (error) => {
+                    console.error(`加載回覆失敗 (${prayerId}):`, error);
+                });
+        }
+        
+        // 切換顯示/隱藏回覆
+        function toggleReplies(prayerId) {
+            const repliesContainer = document.getElementById(`replies-${prayerId}`);
+            const toggleIcon = document.querySelector(`.replies-toggle[data-prayer-id="${prayerId}"] i`);
+            const replyFormToggle = document.querySelector(`.reply-form-toggle[data-prayer-id="${prayerId}"]`);
+            
+            if (repliesContainer.classList.contains('expanded')) {
+                repliesContainer.classList.remove('expanded');
+                toggleIcon.className = 'fas fa-chevron-down';
+                if (replyFormToggle) {
+                    replyFormToggle.style.display = 'none';
+                }
+            } else {
+                repliesContainer.classList.add('expanded');
+                toggleIcon.className = 'fas fa-chevron-up';
+                if (replyFormToggle) {
+                    replyFormToggle.style.display = 'block';
+                    
+                    // 為添加回覆按鈕添加事件
+                    replyFormToggle.onclick = function() {
+                        showReplyModal(prayerId);
+                    };
+                }
+            }
+        }
+        
+        // 顯示回覆模態框
+        function showReplyModal(prayerId, prayerContent = '') {
+            currentPrayerId = prayerId;
+            const modal = document.getElementById('replyModal');
+            const contentElement = document.getElementById('modalPrayerContent');
+            
+            if (prayerContent) {
+                contentElement.textContent = prayerContent;
+            } else {
+                // 如果沒有提供內容，嘗試從DOM獲取
+                const prayerCard = document.querySelector(`.prayer-card[data-id="${prayerId}"]`);
+                if (prayerCard) {
+                    const content = prayerCard.querySelector('.prayer-content').textContent;
+                    contentElement.textContent = content;
+                }
+            }
+            
+            // 清空輸入框
+            document.getElementById('replyName').value = '';
+            document.getElementById('replyContent').value = '';
+            
+            modal.style.display = 'flex';
+        }
+        
+        // 隱藏回覆模態框
+        function hideReplyModal() {
+            document.getElementById('replyModal').style.display = 'none';
+            currentPrayerId = null;
+        }
+        
+        // 提交回覆
+        async function submitReply() {
+            const name = document.getElementById('replyName').value.trim();
+            const content = document.getElementById('replyContent').value.trim();
+            
+            if (!content) {
+                alert('請填寫禱告詞內容');
+                return;
+            }
+            
+            if (!currentPrayerId) {
+                alert('發生錯誤，請重試');
+                return;
+            }
+            
+            try {
+                await repliesCollection.add({
+                    prayerId: currentPrayerId,
+                    name: name || '',
+                    content: content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: auth.currentUser.uid
+                });
+                
+                showNotification('禱告詞已提交！');
+                hideReplyModal();
+                
+                // 如果有展開回覆區塊，確保它保持展開狀態
+                const repliesContainer = document.getElementById(`replies-${currentPrayerId}`);
+                if (repliesContainer && !repliesContainer.classList.contains('expanded')) {
+                    toggleReplies(currentPrayerId);
+                }
+                
+            } catch (error) {
+                console.error('提交回覆失敗:', error);
+                showNotification('提交失敗，請重試');
+            }
         }
         
         // 增加禱告計數
@@ -712,6 +1163,7 @@ const firebaseConfig = {
                     category: category,
                     content: content,
                     prayCount: 0,
+                    replyCount: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     createdBy: auth.currentUser.uid
                 });
@@ -812,54 +1264,6 @@ const firebaseConfig = {
             });
         }
         
-        // ==================== Firebase 配置編輯功能 ====================
-        
-        function showConfigEditor() {
-            document.getElementById('configModal').style.display = 'flex';
-            document.getElementById('configInput').value = `const firebaseConfig = ${JSON.stringify(firebaseConfig, null, 2)};`;
-        }
-        
-        function hideConfigEditor() {
-            document.getElementById('configModal').style.display = 'none';
-        }
-        
-        function saveFirebaseConfig() {
-            const configInput = document.getElementById('configInput').value;
-            
-            try {
-                // 提取配置對象
-                const match = configInput.match(/const firebaseConfig = ({[\s\S]*?});/);
-                if (match && match[1]) {
-                    const newConfig = JSON.parse(match[1]);
-                    
-                    // 保存到本地存儲
-                    localStorage.setItem('firebaseConfig', JSON.stringify(newConfig));
-                    
-                    // 更新配置
-                    firebaseConfig = newConfig;
-                    
-                    // 重新初始化
-                    if (firebase.apps.length > 0) {
-                        firebase.app().delete();
-                    }
-                    
-                    hideConfigEditor();
-                    document.getElementById('firebaseSetup').style.display = 'none';
-                    
-                    // 重新初始化Firebase
-                    setTimeout(() => {
-                        initializeFirebase();
-                        showNotification('Firebase配置已更新！');
-                    }, 500);
-                } else {
-                    alert('請貼上完整的firebaseConfig對象代碼');
-                }
-            } catch (error) {
-                alert('配置格式不正確，請檢查JSON格式');
-                console.error('配置解析錯誤:', error);
-            }
-        }
-        
         // ==================== 初始化應用 ====================
         
         // 頁面加載完成後初始化Firebase
@@ -870,31 +1274,15 @@ const firebaseConfig = {
             setupFiltering();
         });
         
-        // 確保Firebase配置模態框可以關閉
-        document.getElementById('configModal').addEventListener('click', function(e) {
+        // 確保模態框可以關閉
+        document.getElementById('replyModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                hideConfigEditor();
+                hideReplyModal();
             }
         });
+        
+        // 模態框內的取消按鈕
+        document.querySelector('#replyModal button[onclick="hideReplyModal()"]').addEventListener('click', hideReplyModal);
     </script>
-	<script type="module">
-	  // Import the functions you need from the SDKs you need
-	  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-	  // TODO: Add SDKs for Firebase products that you want to use
-	  // https://firebase.google.com/docs/web/setup#available-libraries
-
-	  // Your web app's Firebase configuration
-	  const firebaseConfig = {
-		apiKey: "AIzaSyBhy8f2cGbmspNhktEFk_1svKGmIk4uRhc",
-		authDomain: "church-prayer-app-f7221.firebaseapp.com",
-		projectId: "church-prayer-app-f7221",
-		storageBucket: "church-prayer-app-f7221.firebasestorage.app",
-		messagingSenderId: "462537118904",
-		appId: "1:462537118904:web:f8ac8f0eaf207c5ec4504d"
-	  };
-
-	  // Initialize Firebase
-	  const app = initializeApp(firebaseConfig);
-	</script>
 </body>
 </html>
