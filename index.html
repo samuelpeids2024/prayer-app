@@ -749,7 +749,7 @@
     <!-- 回覆模態框 -->
     <div id="replyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
         <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-            <h3 style="margin-bottom: 1rem; color: var(--secondary);"><i class="fas fa-pray"></i> 為此禱告</h3>
+            <h3 style="margin-bottom: 1rem; color: var(--secondary);"><i class="fas fa-pray"></i> </h3>
             <p style="margin-bottom: 1rem; color: #666;">請為以下禱告事項寫下您的禱告詞：</p>
             <div id="modalPrayerContent" style="background-color: #f9f9f9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-style: italic;">
                 <!-- 禱告內容會動態顯示在這裡 -->
@@ -935,11 +935,11 @@
                     <div class="prayer-date">${date}</div>
                     <div class="pray-actions">
                         <button class="pray-btn" data-id="${prayer.id}">
-                            <i class="fas fa-hands-praying"></i> 為此禱告
+                            <i class="fas fa-hands-praying"></i> 
                             <span class="pray-count">${prayer.prayCount || 0}</span>
                         </button>
                         <button class="reply-btn" data-id="${prayer.id}">
-                            <i class="fas fa-reply"></i> 回覆禱告詞
+                            <i class="fas fa-reply"></i> 回覆禱告
                         </button>
                     </div>
                 </div>
