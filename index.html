@@ -750,7 +750,7 @@
     <div id="replyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
         <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
             <h3 style="margin-bottom: 1rem; color: var(--secondary);"><i class="fas fa-pray"></i> </h3>
-            <p style="margin-bottom: 1rem; color: #666;">請為以下禱告事項寫下您的禱告詞：</p>
+            <p style="margin-bottom: 1rem; color: #666;">請為以下禱告事項寫下您的禱告：</p>
             <div id="modalPrayerContent" style="background-color: #f9f9f9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-style: italic;">
                 <!-- 禱告內容會動態顯示在這裡 -->
             </div>
@@ -759,12 +759,12 @@
                 <input type="text" id="replyName" placeholder="例如：王弟兄、林姊妹">
             </div>
             <div class="form-group">
-                <label for="replyContent">您的禱告詞 *</label>
-                <textarea id="replyContent" placeholder="請寫下您為此事項的禱告詞..." rows="5" required></textarea>
+                <label for="replyContent">您的禱告 *</label>
+                <textarea id="replyContent" placeholder="請寫下您為此事項的禱告..." rows="5" required></textarea>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.5rem;">
                 <button onclick="submitReply()" style="background: linear-gradient(to right, var(--primary), var(--secondary)); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-                    <i class="fas fa-paper-plane"></i> 提交禱告詞
+                    <i class="fas fa-paper-plane"></i> 提交禱告
                 </button>
                 <button onclick="hideReplyModal()" style="background: #777; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
                     取消
@@ -920,14 +920,14 @@
                 <div class="replies-section">
                     <button class="replies-toggle" data-prayer-id="${prayer.id}">
                         <i class="fas fa-chevron-down"></i>
-                        <span>查看禱告回覆</span>
+                        <span>查看回覆</span>
                         <span class="reply-count">(${prayer.replyCount || 0})</span>
                     </button>
                     <div class="replies-container" id="replies-${prayer.id}">
                         <!-- 回覆內容會動態加載 -->
                     </div>
                     <button class="reply-form-toggle" data-prayer-id="${prayer.id}" style="display: none; background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
-                        <i class="fas fa-plus"></i> 添加禱告回覆
+                        <i class="fas fa-plus"></i> 添加回覆
                     </button>
                 </div>
                 
@@ -939,7 +939,7 @@
                             <span class="pray-count">${prayer.prayCount || 0}</span>
                         </button>
                         <button class="reply-btn" data-id="${prayer.id}">
-                            <i class="fas fa-reply"></i> 回覆禱告
+                            <i class="fas fa-reply"></i> 回覆
                         </button>
                     </div>
                 </div>
